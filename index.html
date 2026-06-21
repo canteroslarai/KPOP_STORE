@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KpopVault - Diseño del Registro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #0f0a1f; color: #e0d4ff; }
+        h1, h2 { color: #ff00aa; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background: #1a1433; }
+        th, td { border: 1px solid #ff00aa; padding: 12px; text-align: left; }
+        th { background-color: #ff00aa; color: white; }
+        .justificacion { background-color: #2a1f4d; padding: 20px; border-radius: 10px; border-left: 5px solid #ff00aa; }
+    </style>
+</head>
+<body>
+    <h1>🎤 KpopVault</h1>
+    <p><strong>Descripción:</strong> Plataforma de e-commerce de merchandising K-Pop con foco en coleccionables.</p>
+
+    <h2>Registro Principal - Tabla Producto</h2>
+    <table>
+        <tr><th>Campo</th><th>Tipo de dato</th><th>Descripción</th><th>Obligatorio</th></tr>
+        <tr><td><strong>ID_Producto</strong></td><td>VARCHAR(60)</td><td>Identificador único</td><td>Sí</td></tr>
+        <tr><td>Nombre</td><td>VARCHAR(200)</td><td>Nombre del producto</td><td>Sí</td></tr>
+        <tr><td>Grupo</td><td>VARCHAR(100)</td><td>Grupo (ENHYPEN, BTS...)</td><td>Sí</td></tr>
+        <tr><td><strong>Miembro</strong></td><td>VARCHAR(100)</td><td>Miembro (Heeseung, Jungwon...)</td><td>No</td></tr>
+        <tr><td><strong>Album_Name</strong></td><td>VARCHAR(150)</td><td>Nombre del álbum</td><td>No</td></tr>
+        <tr><td><strong>Era</strong></td><td>VARCHAR(100)</td><td>Era del comeback</td><td>No</td></tr>
+        <tr><td>Tipo_Producto</td><td>ENUM('Album','Photocard','Lightstick','Ropa','Accesorio','Coleccionable')</td><td>Categoría</td><td>Sí</td></tr>
+        <tr><td>Version</td><td>VARCHAR(100)</td><td>Versión específica</td><td>No</td></tr>
+        <tr><td><strong>Rarity</strong></td><td>VARCHAR(50)</td><td>Rareza</td><td>No</td></tr>
+        <tr><td>Precio</td><td>DECIMAL(12,2)</td><td>Precio USD</td><td>Sí</td></tr>
+        <tr><td>Stock</td><td>INT</td><td>Cantidad disponible</td><td>Sí</td></tr>
+        <tr><td>Descripcion</td><td>TEXT</td><td>Descripción</td><td>Sí</td></tr>
+        <tr><td>Fecha_Lanzamiento</td><td>DATE</td><td>Fecha de lanzamiento</td><td>No</td></tr>
+        <tr><td>Estado</td><td>ENUM('Nuevo','Usado','Pre-order','Limitado','Descatalogado')</td><td>Estado</td><td>Sí</td></tr>
+        <tr><td>URL_Imagen</td><td>VARCHAR(500)</td><td>URL imagen principal</td><td>Sí</td></tr>
+    </table>
+
+    <h2>Clave Primaria</h2>
+    <div class="justificacion">
+        <strong>Clave Primaria:</strong> ID_Producto (VARCHAR(60))<br><br>
+        <strong>Justificación:</strong> Proporciona unicidad absoluta en un catálogo con muchas versiones similares de productos (especialmente photocards de ENHYPEN). Facilita búsquedas, relaciones con otras tablas y escalabilidad. Ejemplo: KP-ENHYPEN-PC-HEESEUNG-DARKBLOOD-001
+    </div>
+
+    <h2>Ejemplos de Productos (ENHYPEN incluido)</h2>
+    <table>
+        <tr><th>ID_Producto</th><th>Nombre</th><th>Grupo</th><th>Miembro</th><th>Album_Name</th><th>Rarity</th><th>Precio</th></tr>
+        <tr><td>KP-ENHYPEN-PC-HEESEUNG-DARKBLOOD</td><td>Heeseung Photocard</td><td>ENHYPEN</td><td>Heeseung</td><td>Dark Blood</td><td>Ultra Rare</td><td>32.50</td></tr>
+        <tr><td>KP-ENHYPEN-PC-JUNGWON-MANIFESTO</td><td>Jungwon Photocard</td><td>ENHYPEN</td><td>Jungwon</td><td>Manifesto: Day 1</td><td>Rare</td><td>28.00</td></tr>
+        <tr><td>KP-ENHYPEN-PC-NIKI-BORDER</td><td>Ni-ki Photocard</td><td>ENHYPEN</td><td>Ni-ki</td><td>Border: Carnival</td><td>Super Rare</td><td>45.00</td></tr>
+    </table>
+
+    <p>Miembros de ENHYPEN: Heeseung, Jay, Jake, Sunghoon, Sunoo, Jungwon, Ni-ki.</p>
+</body>
+</html>
