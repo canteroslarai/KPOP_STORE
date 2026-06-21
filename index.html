@@ -6,48 +6,65 @@
     <title>KpopVault - Tienda de K-Pop</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background: #0f0a1f; color: #e0d4ff; }
-        header { background: #ff00aa; padding: 20px; text-align: center; }
-        .productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
-        .producto { background: #1a1433; border-radius: 10px; overflow: hidden; text-align: center; padding: 15px; }
-        .producto img { width: 100%; height: 220px; object-fit: cover; }
-        .producto button { background: #ff00aa; color: white; border: none; padding: 10px; margin-top: 10px; cursor: pointer; border-radius: 5px; }
-        .carrito { position: fixed; top: 20px; right: 20px; background: #ff00aa; color: white; padding: 10px 15px; border-radius: 50px; cursor: pointer; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: #1a1433; margin: 5% auto; padding: 20px; width: 80%; max-width: 600px; border-radius: 10px; }
+        header { background: linear-gradient(#ff00aa, #9c27b0); padding: 20px; text-align: center; }
+        .productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px; }
+        .producto { background: #1a1433; border-radius: 12px; overflow: hidden; text-align: center; padding: 15px; transition: 0.3s; }
+        .producto:hover { transform: scale(1.05); box-shadow: 0 0 15px #ff00aa; }
+        .producto img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
+        .producto button { background: #ff00aa; color: white; border: none; padding: 12px; margin-top: 10px; cursor: pointer; border-radius: 8px; width: 100%; font-weight: bold; }
+        .carrito { position: fixed; top: 20px; right: 20px; background: #ff00aa; color: white; padding: 12px 18px; border-radius: 50px; cursor: pointer; font-size: 18px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; }
+        .modal-content { background: #1a1433; margin: 5% auto; padding: 25px; width: 90%; max-width: 700px; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
     <header>
         <h1>🎤 KpopVault</h1>
-        <p>Tu tienda favorita de K-Pop</p>
+        <p>Tu tienda oficial de merchandising K-Pop</p>
     </header>
 
     <div class="carrito" onclick="mostrarCarrito()">🛒 Carrito (<span id="contador">0</span>)</div>
 
-    <h2 style="text-align:center; margin:20px;">Productos Destacados</h2>
+    <h2 style="text-align:center; margin:25px 0;">Catálogo de Productos</h2>
     <div class="productos" id="lista-productos"></div>
 
-    <!-- Modal del carrito -->
     <div class="modal" id="modal-carrito">
         <div class="modal-content">
-            <h2>Tu Carrito</h2>
+            <h2>🛒 Tu Carrito</h2>
             <div id="items-carrito"></div>
             <h3>Total: $<span id="total">0</span></h3>
-            <button onclick="vaciarCarrito()" style="background:red;">Vaciar Carrito</button>
-            <button onclick="cerrarCarrito()" style="margin-left:10px;">Cerrar</button>
+            <button onclick="vaciarCarrito()" style="background:#f44336; margin-right:10px;">Vaciar Carrito</button>
+            <button onclick="cerrarCarrito()">Cerrar</button>
         </div>
     </div>
 
     <script>
         let carrito = [];
-
         const productos = [
-            { id: 1, nombre: "Heeseung Photocard Dark Blood", grupo: "ENHYPEN", precio: 32.50, img: "https://picsum.photos/id/1015/300/300" },
-            { id: 2, nombre: "Jungwon Photocard Manifesto", grupo: "ENHYPEN", precio: 28.00, img: "https://picsum.photos/id/201/300/300" },
+            { id: 1, nombre: "Heeseung Photocard Dark Blood Ultra Rare", grupo: "ENHYPEN", precio: 32.50, img: "https://picsum.photos/id/1015/300/300" },
+            { id: 2, nombre: "Jungwon Photocard Manifesto Rare", grupo: "ENHYPEN", precio: 28.00, img: "https://picsum.photos/id/201/300/300" },
             { id: 3, nombre: "Ni-ki Photocard Border Carnival", grupo: "ENHYPEN", precio: 45.00, img: "https://picsum.photos/id/237/300/300" },
-            { id: 4, nombre: "Lightstick Official ENHYPEN", grupo: "ENHYPEN", precio: 85.99, img: "https://picsum.photos/id/180/300/300" },
-            { id: 5, nombre: "Jimin Butter Photocard", grupo: "BTS", precio: 35.99, img: "https://picsum.photos/id/251/300/300" },
+            { id: 4, nombre: "Official Lightstick ENHYPEN Ver. 2", grupo: "ENHYPEN", precio: 89.99, img: "https://picsum.photos/id/180/300/300" },
+            { id: 5, nombre: "Romance: Untold Album Limited", grupo: "ENHYPEN", precio: 48.50, img: "https://picsum.photos/id/251/300/300" },
+            { id: 6, nombre: "Jimin Butter Photocard", grupo: "BTS", precio: 35.99, img: "https://picsum.photos/id/133/300/300" },
+            { id: 7, nombre: "Army Bomb Ver. 4 Lightstick", grupo: "BTS", precio: 95.00, img: "https://picsum.photos/id/180/300/300" },
+            { id: 8, nombre: "Map of the Soul: 7 Album", grupo: "BTS", precio: 42.00, img: "https://picsum.photos/id/201/300/300" },
+            { id: 9, nombre: "Rosé Born Pink Photocard", grupo: "BLACKPINK", precio: 29.99, img: "https://picsum.photos/id/1016/300/300" },
+            { id: 10, nombre: "BLACKPINK Lightstick", grupo: "BLACKPINK", precio: 79.99, img: "https://picsum.photos/id/180/300/300" },
         ];
+
+        // Genera más productos automáticamente
+        for (let i = 11; i <= 50; i++) {
+            const grupos = ["ENHYPEN", "BTS", "BLACKPINK", "Stray Kids", "aespa", "TXT", "NewJeans", "IVE", "SEVENTEEN"];
+            const tipos = ["Photocard", "Album", "Lightstick", "Hoodie", "Accesorio", "Coleccionable"];
+            productos.push({
+                id: i,
+                nombre: `${grupos[i%grupos.length]} ${tipos[i%tipos.length]} Edición Especial`,
+                grupo: grupos[i%grupos.length],
+                precio: Math.round((15 + Math.random()*90)*100)/100,
+                img: `https://picsum.photos/id/${100 + i}/300/300`
+            });
+        }
 
         function mostrarProductos() {
             const contenedor = document.getElementById("lista-productos");
@@ -58,7 +75,7 @@
                         <img src="${p.img}" alt="${p.nombre}">
                         <h3>${p.nombre}</h3>
                         <p>${p.grupo}</p>
-                        <p><strong>$${p.precio}</strong></p>
+                        <p><strong>$${p.precio.toFixed(2)}</strong></p>
                         <button onclick="agregarAlCarrito(${p.id})">Agregar al carrito</button>
                     </div>
                 `;
@@ -69,7 +86,7 @@
             const producto = productos.find(p => p.id === id);
             carrito.push(producto);
             document.getElementById("contador").textContent = carrito.length;
-            alert(`${producto.nombre} agregado al carrito!`);
+            alert(`✅ ${producto.nombre} agregado al carrito`);
         }
 
         function mostrarCarrito() {
@@ -77,25 +94,17 @@
             const items = document.getElementById("items-carrito");
             let total = 0;
             items.innerHTML = "";
-            carrito.forEach((p, index) => {
+            carrito.forEach(p => {
                 total += p.precio;
-                items.innerHTML += `<p>${p.nombre} - $${p.precio}</p>`;
+                items.innerHTML += `<p>→ ${p.nombre} - $${p.precio.toFixed(2)}</p>`;
             });
             document.getElementById("total").textContent = total.toFixed(2);
             modal.style.display = "block";
         }
 
-        function cerrarCarrito() {
-            document.getElementById("modal-carrito").style.display = "none";
-        }
+        function cerrarCarrito() { document.getElementById("modal-carrito").style.display = "none"; }
+        function vaciarCarrito() { carrito = []; document.getElementById("contador").textContent = 0; cerrarCarrito(); }
 
-        function vaciarCarrito() {
-            carrito = [];
-            document.getElementById("contador").textContent = 0;
-            cerrarCarrito();
-        }
-
-        // Cargar productos
         mostrarProductos();
     </script>
 </body>

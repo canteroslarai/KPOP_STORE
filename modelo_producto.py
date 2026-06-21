@@ -1,11 +1,9 @@
 from sqlalchemy import Column, Integer, String, Float, Date, Enum, create_engine, Text
 from sqlalchemy.ext.declarative import declarative_base
 import enum
-from datetime import date
 
 Base = declarative_base()
 
-# Enumeraciones
 class TipoProducto(enum.Enum):
     Album = "Album"
     Photocard = "Photocard"
@@ -40,9 +38,7 @@ class Producto(Base):
     Estado = Column(Enum(EstadoProducto), nullable=False)
     URL_Imagen = Column(String(500), nullable=False)
 
-# Crear la base de datos
 engine = create_engine('sqlite:///kpopvault.db', echo=True)
 Base.metadata.create_all(engine)
 
-print("✅ Base de datos 'kpopvault.db' creada exitosamente.")
-print("✅ Tabla 'productos' lista con soporte completo para K-Pop (ENHYPEN, BTS, etc.)")
+print("✅ Tabla de productos creada correctamente.")
