@@ -4,6 +4,7 @@ import enum
 
 Base = declarative_base()
 
+# Enumeraciones para mejor organización
 class TipoProducto(enum.Enum):
     Album = "Album"
     Photocard = "Photocard"
@@ -32,13 +33,15 @@ class Producto(Base):
     Version = Column(String(100))
     Rarity = Column(String(50))
     Precio = Column(Float, nullable=False)
-    Stock = Column(Integer, nullable=False)
+    Stock = Column(Integer, nullable=False, default=0)
     Descripcion = Column(Text, nullable=False)
     Fecha_Lanzamiento = Column(Date)
     Estado = Column(Enum(EstadoProducto), nullable=False)
     URL_Imagen = Column(String(500), nullable=False)
+    URL_Imagenes_Adicionales = Column(Text)
 
-# Crear base de datos
+# Crear la base de datos (SQLite)
 engine = create_engine('sqlite:///kpopvault.db', echo=True)
 Base.metadata.create_all(engine)
-print("Tabla Producto creada exitosamente con soporte para ENHYPEN.")
+
+print("✅ Tabla 'productos' creada exitosamente con soporte para ENHYPEN y coleccionistas de K-Pop.")
