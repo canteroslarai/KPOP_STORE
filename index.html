@@ -45,7 +45,7 @@
     <h2 style="text-align:center; margin:25px 0;">Catálogo de Productos</h2>
     <div class="productos" id="lista-productos"></div>
 
-    <!-- Modal Detalle -->
+    <!-- Modales -->
     <div class="modal" id="modal-detalle">
         <div class="modal-content">
             <span onclick="cerrarModal()" style="float:right; font-size:30px; cursor:pointer;">&times;</span>
@@ -58,7 +58,6 @@
         </div>
     </div>
 
-    <!-- Modal Carrito -->
     <div class="modal" id="modal-carrito">
         <div class="modal-content">
             <h2>🛒 Tu Carrito</h2>
@@ -70,7 +69,6 @@
         </div>
     </div>
 
-    <!-- Modal Checkout -->
     <div class="modal" id="modal-checkout">
         <div class="modal-content">
             <h2>💳 Finalizar Compra</h2>
@@ -105,17 +103,17 @@
         let productoSeleccionado = null;
 
         const productos = [
-            { id: 1, nombre: "Heeseung Photocard Dark Blood", grupo: "ENHYPEN", tipo: "Photocard", precio: 32.50, img: "https://i.pinimg.com/736x/22/89/0c/22890c15d3917f0115215574d19595fc.jpg", descripcion: "Photocard oficial de Heeseung - Dark Blood" },
-            { id: 2, nombre: "Jungwon Photocard Manifesto", grupo: "ENHYPEN", tipo: "Photocard", precio: 28.00, img: "https://picsum.photos/id/201/300/300", descripcion: "Photocard oficial de Jungwon" },
-            { id: 3, nombre: "Ni-ki Photocard Border Carnival", grupo: "ENHYPEN", tipo: "Photocard", precio: 45.00, img: "https://picsum.photos/id/237/300/300", descripcion: "Photocard oficial de Ni-ki" },
+            { id: 1, nombre: "Heeseung Photocard Dark Blood", grupo: "ENHYPEN", tipo: "Photocard", precio: 32.50, img: "https://i.pinimg.com/736x/22/89/0c/22890c15d3917f0115215574d19595fc.jpg", descripcion: "Photocard oficial de Heeseung" },
+            { id: 2, nombre: "Jungwon Photocard Manifesto", grupo: "ENHYPEN", tipo: "Photocard", precio: 28.00, img: "https://i.pinimg.com/736x/3a/16/5b/3a165b2fe2c5f6e633ab3f773cd8dd94.jpg", descripcion: "Photocard oficial de Jungwon" },
+            { id: 3, nombre: "Ni-ki Photocard Border Carnival", grupo: "ENHYPEN", tipo: "Photocard", precio: 45.00, img: "https://i.pinimg.com/736x/0d/8f/8e/0d8f8e5f0d8f8e5f0d8f8e5f0d8f8e5f.jpg", descripcion: "Photocard oficial de Ni-ki" },
             { id: 4, nombre: "ENHYPEN Official Lightstick Ver.2", grupo: "ENHYPEN", tipo: "Lightstick", precio: 89.99, img: "https://i.pinimg.com/736x/5e/d7/95/5ed7958c42bbbab595b2b2c3c2639de6.jpg", descripcion: "Lightstick oficial ENHYPEN" },
             { id: 5, nombre: "Dark Blood Album Limited", grupo: "ENHYPEN", tipo: "Album", precio: 48.50, img: "https://picsum.photos/id/251/300/300", descripcion: "Álbum Dark Blood Limited" },
-            { id: 6, nombre: "Army Bomb Ver.4 Lightstick", grupo: "BTS", tipo: "Lightstick", precio: 95.00, img: "https://picsum.photos/id/180/300/300", descripcion: "Lightstick oficial BTS Army Bomb" },
-            { id: 7, nombre: "Jimin Butter Photocard", grupo: "BTS", tipo: "Photocard", precio: 35.99, img: "https://picsum.photos/id/133/300/300", descripcion: "Photocard oficial de Jimin" },
+            { id: 6, nombre: "Army Bomb Ver.4 Lightstick", grupo: "BTS", tipo: "Lightstick", precio: 95.00, img: "https://picsum.photos/id/180/300/300", descripcion: "Lightstick oficial BTS" },
+            { id: 7, nombre: "Jimin Butter Photocard", grupo: "BTS", tipo: "Photocard", precio: 35.99, img: "https://i.pinimg.com/736x/0d/8f/8e/0d8f8e5f0d8f8e5f0d8f8e5f.jpg", descripcion: "Photocard oficial de Jimin" },
             { id: 8, nombre: "Born Pink Album", grupo: "BLACKPINK", tipo: "Album", precio: 42.00, img: "https://picsum.photos/id/201/300/300", descripcion: "Álbum Born Pink BLACKPINK" }
         ];
 
-        // Más productos
+        // Generar más productos
         for (let i = 9; i <= 50; i++) {
             const grupos = ["ENHYPEN", "BTS", "BLACKPINK", "Stray Kids", "aespa"];
             const tipos = ["Photocard", "Album", "Lightstick"];
@@ -132,6 +130,7 @@
             });
         }
 
+        // Funciones (igual que antes)
         function mostrarProductos(lista) {
             const contenedor = document.getElementById("lista-productos");
             contenedor.innerHTML = "";
