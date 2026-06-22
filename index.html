@@ -45,7 +45,7 @@
     <h2 style="text-align:center; margin:25px 0;">Catálogo de Productos</h2>
     <div class="productos" id="lista-productos"></div>
 
-    <!-- Modal Detalle -->
+    <!-- Modal Detalle del Producto -->
     <div class="modal" id="modal-detalle">
         <div class="modal-content">
             <span onclick="cerrarModal()" style="float:right; font-size:30px; cursor:pointer;">&times;</span>
@@ -64,7 +64,7 @@
             <h2>🛒 Tu Carrito</h2>
             <div id="items-carrito"></div>
             <h3>Total: $<span id="total">0</span></h3>
-            <button onclick="vaciarCarrito()" style="background:#f44336;">Vaciar</button>
+            <button onclick="vaciarCarrito()" style="background:#f44336;">Vaciar Carrito</button>
             <button onclick="procederAlPago()" style="background:#00c853; margin-left:10px;">Proceder al Pago</button>
             <button onclick="cerrarCarrito()" style="margin-left:10px;">Cerrar</button>
         </div>
@@ -79,9 +79,11 @@
                 <input type="text" id="nombre" placeholder="Nombre completo" required>
                 <input type="email" id="email" placeholder="Correo electrónico" required>
                 <input type="tel" id="telefono" placeholder="Teléfono" required>
+
                 <h3>Dirección de Envío</h3>
                 <input type="text" id="direccion" placeholder="Dirección completa" required>
                 <input type="text" id="ciudad" placeholder="Ciudad" required>
+
                 <h3>Método de Pago</h3>
                 <select id="metodo-pago" required>
                     <option value="">Selecciona método</option>
@@ -105,14 +107,14 @@
         let productoSeleccionado = null;
 
         const productos = [
-            { id: 1, nombre: "Heeseung Photocard Dark Blood", grupo: "ENHYPEN", tipo: "Photocard", precio: 32.50, img: "https://picsum.photos/id/1015/300/300", descripcion: "Photocard oficial de Heeseung - Dark Blood" },
-            { id: 2, nombre: "Jungwon Photocard Manifesto", grupo: "ENHYPEN", tipo: "Photocard", precio: 28.00, img: "https://picsum.photos/id/201/300/300", descripcion: "Photocard oficial de Jungwon" },
-            { id: 3, nombre: "Ni-ki Photocard Border Carnival", grupo: "ENHYPEN", tipo: "Photocard", precio: 45.00, img: "https://picsum.photos/id/237/300/300", descripcion: "Photocard oficial de Ni-ki" },
+            { id: 1, nombre: "Heeseung Photocard Dark Blood", grupo: "ENHYPEN", tipo: "Photocard", precio: 32.50, img: "https://picsum.photos/id/1015/300/300", descripcion: "Photocard oficial ultra rara de Heeseung" },
+            { id: 2, nombre: "Jungwon Photocard Manifesto", grupo: "ENHYPEN", tipo: "Photocard", precio: 28.00, img: "https://picsum.photos/id/201/300/300", descripcion: "Photocard Rare oficial de Jungwon" },
+            { id: 3, nombre: "Ni-ki Photocard Border Carnival", grupo: "ENHYPEN", tipo: "Photocard", precio: 45.00, img: "https://picsum.photos/id/237/300/300", descripcion: "Photocard Super Rare de Ni-ki" },
             { id: 4, nombre: "ENHYPEN Official Lightstick Ver.2", grupo: "ENHYPEN", tipo: "Lightstick", precio: 89.99, img: "https://picsum.photos/id/180/300/300", descripcion: "Lightstick oficial de ENHYPEN" },
             { id: 5, nombre: "Dark Blood Album Limited", grupo: "ENHYPEN", tipo: "Album", precio: 48.50, img: "https://picsum.photos/id/251/300/300", descripcion: "Álbum Dark Blood edición limitada" },
-            { id: 6, nombre: "Army Bomb Ver.4 Lightstick", grupo: "BTS", tipo: "Lightstick", precio: 95.00, img: "https://picsum.photos/id/180/300/300", descripcion: "Lightstick oficial BTS Army Bomb" },
+            { id: 6, nombre: "Army Bomb Ver.4 Lightstick", grupo: "BTS", tipo: "Lightstick", precio: 95.00, img: "https://picsum.photos/id/180/300/300", descripcion: "Lightstick oficial BTS" },
             { id: 7, nombre: "Jimin Butter Photocard", grupo: "BTS", tipo: "Photocard", precio: 35.99, img: "https://picsum.photos/id/133/300/300", descripcion: "Photocard oficial de Jimin" },
-            { id: 8, nombre: "Born Pink Album", grupo: "BLACKPINK", tipo: "Album", precio: 42.00, img: "https://picsum.photos/id/201/300/300", descripcion: "Álbum Born Pink de BLACKPINK" },
+            { id: 8, nombre: "Born Pink Album", grupo: "BLACKPINK", tipo: "Album", precio: 42.00, img: "https://picsum.photos/id/201/300/300", descripcion: "Álbum Born Pink de BLACKPINK" }
         ];
 
         // Generar más productos
@@ -121,13 +123,16 @@
             const tipos = ["Photocard", "Album", "Lightstick"];
             const tipo = tipos[i % 3];
             const grupo = grupos[i % grupos.length];
+            let imgId = 100 + i;
+            if (tipo === "Album") imgId = 200 + i;
+            if (tipo === "Lightstick") imgId = 180 + (i % 50);
             productos.push({
                 id: i,
                 nombre: `${grupo} ${tipo} Edición Especial`,
                 grupo: grupo,
                 tipo: tipo,
                 precio: Math.round((20 + Math.random()*80)*100)/100,
-                img: `https://picsum.photos/id/${100 + i}/300/300`,
+                img: `https://picsum.photos/id/${imgId}/300/300`,
                 descripcion: `Producto oficial ${tipo.toLowerCase()} de ${grupo}`
             });
         }
@@ -148,7 +153,6 @@
             });
         }
 
-        // Resto de funciones (igual que antes)
         function filtrarProductos() {
             const texto = document.getElementById("busqueda").value.toLowerCase();
             const grupo = document.getElementById("filtroGrupo").value;
@@ -169,7 +173,10 @@
         }
 
         function cerrarModal() { document.getElementById("modal-detalle").style.display = "none"; }
-        function agregarDesdeDetalle() { if (productoSeleccionado) agregarAlCarrito(productoSeleccionado.id); cerrarModal(); }
+        function agregarDesdeDetalle() {
+            if (productoSeleccionado) agregarAlCarrito(productoSeleccionado.id);
+            cerrarModal();
+        }
 
         function agregarAlCarrito(id) {
             const producto = productos.find(p => p.id === id);
