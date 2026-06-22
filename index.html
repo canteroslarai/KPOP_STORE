@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KpopVault - Tienda de K-Pop</title>
+    <title>KpopVault - Tienda Oficial de K-Pop</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background: #0f0a1f; color: #e0d4ff; }
         header { background: linear-gradient(#ff00aa, #9c27b0); padding: 20px; text-align: center; }
+        .filtros { padding: 20px; text-align: center; background: #1a1433; }
+        .filtros input, .filtros select { padding: 10px; margin: 5px; border-radius: 8px; border: none; width: 220px; }
         .productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px; }
-        .producto { background: #1a1433; border-radius: 12px; overflow: hidden; text-align: center; padding: 15px; transition: 0.3s; }
-        .producto:hover { transform: scale(1.05); box-shadow: 0 0 15px #ff00aa; }
+        .producto { background: #1a1433; border-radius: 12px; overflow: hidden; text-align: center; padding: 15px; transition: 0.3s; cursor: pointer; }
+        .producto:hover { transform: scale(1.05); box-shadow: 0 0 20px #ff00aa; }
         .producto img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
-        .producto button { background: #ff00aa; color: white; border: none; padding: 12px; margin-top: 10px; cursor: pointer; border-radius: 8px; width: 100%; font-weight: bold; }
-        .carrito { position: fixed; top: 20px; right: 20px; background: #ff00aa; color: white; padding: 12px 18px; border-radius: 50px; cursor: pointer; font-size: 18px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; }
-        .modal-content { background: #1a1433; margin: 5% auto; padding: 25px; width: 90%; max-width: 700px; border-radius: 12px; max-height: 80vh; overflow-y: auto; }
+        .producto button { background: #ff00aa; color: white; border: none; padding: 12px; margin-top: 10px; cursor: pointer; border-radius: 8px; width: 100%; }
+        .carrito { position: fixed; top: 20px; right: 20px; background: #ff00aa; color: white; padding: 12px 18px; border-radius: 50px; cursor: pointer; font-size: 18px; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.6); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; overflow-y: auto; }
+        .modal-content { background: #1a1433; margin: 5% auto; padding: 25px; width: 90%; max-width: 700px; border-radius: 12px; }
+        form input, form select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; }
+        .btn-pagar { background: #00c853; color: white; padding: 15px; font-size: 18px; width: 100%; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; }
+        footer { text-align: center; padding: 30px; background: #1a1433; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -25,72 +30,153 @@
 
     <div class="carrito" onclick="mostrarCarrito()">🛒 Carrito (<span id="contador">0</span>)</div>
 
+    <div class="filtros">
+        <input type="text" id="busqueda" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
+        <select id="filtroGrupo" onchange="filtrarProductos()">
+            <option value="">Todos los Grupos</option>
+            <option value="ENHYPEN">ENHYPEN</option>
+            <option value="BTS">BTS</option>
+            <option value="BLACKPINK">BLACKPINK</option>
+            <option value="Stray Kids">Stray Kids</option>
+            <option value="aespa">aespa</option>
+        </select>
+    </div>
+
     <h2 style="text-align:center; margin:25px 0;">Catálogo de Productos</h2>
     <div class="productos" id="lista-productos"></div>
 
+    <!-- Modal Detalle del Producto -->
+    <div class="modal" id="modal-detalle">
+        <div class="modal-content">
+            <span onclick="cerrarModal()" style="float:right; font-size:30px; cursor:pointer;">&times;</span>
+            <img id="img-detalle" style="width:100%; border-radius:12px;" alt="">
+            <h2 id="nombre-detalle"></h2>
+            <p id="grupo-detalle"></p>
+            <p id="descripcion-detalle"></p>
+            <h3>Precio: $<span id="precio-detalle"></span></h3>
+            <button onclick="agregarDesdeDetalle()" style="width:100%; padding:12px;">Agregar al Carrito</button>
+        </div>
+    </div>
+
+    <!-- Modal Carrito -->
     <div class="modal" id="modal-carrito">
         <div class="modal-content">
             <h2>🛒 Tu Carrito</h2>
             <div id="items-carrito"></div>
             <h3>Total: $<span id="total">0</span></h3>
-            <button onclick="vaciarCarrito()" style="background:#f44336; margin-right:10px;">Vaciar Carrito</button>
-            <button onclick="cerrarCarrito()">Cerrar</button>
+            <button onclick="vaciarCarrito()" style="background:#f44336;">Vaciar Carrito</button>
+            <button onclick="procederAlPago()" style="background:#00c853; margin-left:10px;">Proceder al Pago</button>
+            <button onclick="cerrarCarrito()" style="margin-left:10px;">Cerrar</button>
         </div>
     </div>
 
-    <script>
-        let carrito = [];
-        const productos = [
-            { id: 1, nombre: "Heeseung Photocard Dark Blood Ultra Rare", grupo: "ENHYPEN", precio: 32.50, img: "https://picsum.photos/id/1015/300/300" },
-            { id: 2, nombre: "Jungwon Photocard Manifesto Rare", grupo: "ENHYPEN", precio: 28.00, img: "https://picsum.photos/id/201/300/300" },
-            { id: 3, nombre: "Ni-ki Photocard Border Carnival", grupo: "ENHYPEN", precio: 45.00, img: "https://picsum.photos/id/237/300/300" },
-            { id: 4, nombre: "Official Lightstick ENHYPEN Ver. 2", grupo: "ENHYPEN", precio: 89.99, img: "https://picsum.photos/id/180/300/300" },
-            { id: 5, nombre: "Romance: Untold Album Limited", grupo: "ENHYPEN", precio: 48.50, img: "https://picsum.photos/id/251/300/300" },
-            { id: 6, nombre: "Jimin Butter Photocard", grupo: "BTS", precio: 35.99, img: "https://picsum.photos/id/133/300/300" },
-            { id: 7, nombre: "Army Bomb Ver. 4 Lightstick", grupo: "BTS", precio: 95.00, img: "https://picsum.photos/id/180/300/300" },
-            { id: 8, nombre: "Map of the Soul: 7 Album", grupo: "BTS", precio: 42.00, img: "https://picsum.photos/id/201/300/300" },
-            { id: 9, nombre: "Rosé Born Pink Photocard", grupo: "BLACKPINK", precio: 29.99, img: "https://picsum.photos/id/1016/300/300" },
-            { id: 10, nombre: "BLACKPINK Lightstick", grupo: "BLACKPINK", precio: 79.99, img: "https://picsum.photos/id/180/300/300" },
-        ];
+    <!-- Modal Checkout (Formulario de Compra) -->
+    <div class="modal" id="modal-checkout">
+        <div class="modal-content">
+            <h2>💳 Finalizar Compra</h2>
+            <form id="form-compra" onsubmit="finalizarCompra(event)">
+                <h3>Datos Personales</h3>
+                <input type="text" id="nombre" placeholder="Nombre completo" required>
+                <input type="email" id="email" placeholder="Correo electrónico" required>
+                <input type="tel" id="telefono" placeholder="Teléfono" required>
 
-        // Genera más productos automáticamente
-        for (let i = 11; i <= 50; i++) {
-            const grupos = ["ENHYPEN", "BTS", "BLACKPINK", "Stray Kids", "aespa", "TXT", "NewJeans", "IVE", "SEVENTEEN"];
-            const tipos = ["Photocard", "Album", "Lightstick", "Hoodie", "Accesorio", "Coleccionable"];
+                <h3>Dirección de Envío</h3>
+                <input type="text" id="direccion" placeholder="Dirección completa" required>
+                <input type="text" id="ciudad" placeholder="Ciudad / Provincia" required>
+
+                <h3>Método de Pago</h3>
+                <select id="metodo-pago" required>
+                    <option value="">Selecciona un método</option>
+                    <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="transferencia">Transferencia Bancaria</option>
+                    <option value="efectivo">Efectivo al retirar</option>
+                </select>
+
+                <button type="submit" class="btn-pagar">Confirmar Compra y Pagar</button>
+            </form>
+            <button onclick="cerrarCheckout()" style="margin-top:10px;">Cancelar</button>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>KpopVault</strong> - Actividad Formativa N°2 | Diseño de e-Commerce con Inteligencia Artificial</p>
+    </footer>
+
+    <script>
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+        let productoSeleccionado = null;
+
+        const productos = [];
+
+        // Generador de 50 productos
+        const grupos = ["ENHYPEN", "BTS", "BLACKPINK", "Stray Kids", "aespa", "TXT"];
+        const tipos = ["Photocard", "Album", "Lightstick"];
+        for (let i = 1; i <= 50; i++) {
+            const grupo = grupos[i % grupos.length];
+            const tipo = tipos[i % tipos.length];
             productos.push({
                 id: i,
-                nombre: `${grupos[i%grupos.length]} ${tipos[i%tipos.length]} Edición Especial`,
-                grupo: grupos[i%grupos.length],
-                precio: Math.round((15 + Math.random()*90)*100)/100,
-                img: `https://picsum.photos/id/${100 + i}/300/300`
+                nombre: `${grupo} ${tipo} Edición Especial`,
+                grupo: grupo,
+                tipo: tipo,
+                precio: Math.round((20 + Math.random() * 80) * 100) / 100,
+                img: `https://picsum.photos/id/${100 + i}/300/300`,
+                descripcion: `Producto oficial de ${grupo} - Alta calidad para coleccionistas.`
             });
         }
 
-        function mostrarProductos() {
+        function mostrarProductos(lista) {
             const contenedor = document.getElementById("lista-productos");
             contenedor.innerHTML = "";
-            productos.forEach(p => {
+            lista.forEach(p => {
                 contenedor.innerHTML += `
-                    <div class="producto">
+                    <div class="producto" onclick="verDetalle(${p.id})">
                         <img src="${p.img}" alt="${p.nombre}">
                         <h3>${p.nombre}</h3>
                         <p>${p.grupo}</p>
                         <p><strong>$${p.precio.toFixed(2)}</strong></p>
-                        <button onclick="agregarAlCarrito(${p.id})">Agregar al carrito</button>
+                        <button onclick="event.stopImmediatePropagation(); agregarAlCarrito(${p.id});">Agregar al carrito</button>
                     </div>
                 `;
             });
         }
 
+        function filtrarProductos() {
+            const texto = document.getElementById("busqueda").value.toLowerCase();
+            const grupo = document.getElementById("filtroGrupo").value;
+            const filtrados = productos.filter(p => 
+                p.nombre.toLowerCase().includes(texto) &&
+                (grupo === "" || p.grupo === grupo)
+            );
+            mostrarProductos(filtrados);
+        }
+
+        function verDetalle(id) {
+            productoSeleccionado = productos.find(p => p.id === id);
+            document.getElementById("img-detalle").src = productoSeleccionado.img;
+            document.getElementById("nombre-detalle").textContent = productoSeleccionado.nombre;
+            document.getElementById("grupo-detalle").textContent = productoSeleccionado.grupo;
+            document.getElementById("descripcion-detalle").textContent = productoSeleccionado.descripcion;
+            document.getElementById("precio-detalle").textContent = productoSeleccionado.precio.toFixed(2);
+            document.getElementById("modal-detalle").style.display = "block";
+        }
+
+        function cerrarModal() { document.getElementById("modal-detalle").style.display = "none"; }
+        function agregarDesdeDetalle() {
+            if (productoSeleccionado) agregarAlCarrito(productoSeleccionado.id);
+            cerrarModal();
+        }
+
         function agregarAlCarrito(id) {
             const producto = productos.find(p => p.id === id);
             carrito.push(producto);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
             document.getElementById("contador").textContent = carrito.length;
             alert(`✅ ${producto.nombre} agregado al carrito`);
         }
 
         function mostrarCarrito() {
-            const modal = document.getElementById("modal-carrito");
             const items = document.getElementById("items-carrito");
             let total = 0;
             items.innerHTML = "";
@@ -99,13 +185,39 @@
                 items.innerHTML += `<p>→ ${p.nombre} - $${p.precio.toFixed(2)}</p>`;
             });
             document.getElementById("total").textContent = total.toFixed(2);
-            modal.style.display = "block";
+            document.getElementById("modal-carrito").style.display = "block";
         }
 
         function cerrarCarrito() { document.getElementById("modal-carrito").style.display = "none"; }
-        function vaciarCarrito() { carrito = []; document.getElementById("contador").textContent = 0; cerrarCarrito(); }
+        function vaciarCarrito() {
+            carrito = [];
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            document.getElementById("contador").textContent = 0;
+            cerrarCarrito();
+        }
 
-        mostrarProductos();
+        function procederAlPago() {
+            if (carrito.length === 0) return alert("El carrito está vacío");
+            cerrarCarrito();
+            document.getElementById("modal-checkout").style.display = "block";
+        }
+
+        function cerrarCheckout() { document.getElementById("modal-checkout").style.display = "none"; }
+
+        function finalizarCompra(e) {
+            e.preventDefault();
+            const nombre = document.getElementById("nombre").value;
+            alert(`🎉 ¡Compra realizada con éxito!\n\nGracias ${nombre}!\nTe contactaremos pronto.`);
+            carrito = [];
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            document.getElementById("contador").textContent = 0;
+            cerrarCheckout();
+            document.getElementById("form-compra").reset();
+        }
+
+        // Inicializar
+        mostrarProductos(productos);
+        document.getElementById("contador").textContent = carrito.length;
     </script>
 </body>
 </html>

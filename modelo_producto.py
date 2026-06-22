@@ -41,4 +41,4 @@ class Producto(Base):
 engine = create_engine('sqlite:///kpopvault.db', echo=True)
 Base.metadata.create_all(engine)
 
-print("✅ Tabla de productos creada correctamente.")
+print("✅ Tabla 'productos' creada exitosamente con soporte para K-Pop.")
